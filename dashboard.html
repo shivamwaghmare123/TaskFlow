@@ -1,0 +1,22 @@
+{% extends "base.html" %}{% block title %}Dashboard · TaskFlow{% endblock %}{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+<div><div class="text-uppercase small fw-bold text-primary mb-1">Workspace</div><h1 class="page-title h2 mb-1">Good to see you, {{ user.username }}.</h1><p class="subtitle mb-0">Here’s what’s happening with your work today.</p></div>
+<a href="{% url 'project_create' %}" class="btn btn-brand">+ New Project</a>
+</div>
+<div class="row g-3 mb-4">
+<div class="col-6 col-lg"><div class="card stat-card"><span class="stat-label">TOTAL TASKS</span><div class="stat">{{total}}</div><div class="stat-icon">✓</div></div></div>
+<div class="col-6 col-lg"><div class="card stat-card"><span class="stat-label">TO DO</span><div class="stat">{{todo}}</div><div class="stat-icon">○</div></div></div>
+<div class="col-6 col-lg"><div class="card stat-card"><span class="stat-label">IN PROGRESS</span><div class="stat">{{progress}}</div><div class="stat-icon">↗</div></div></div>
+<div class="col-6 col-lg"><div class="card stat-card"><span class="stat-label">COMPLETED</span><div class="stat">{{done}}</div><div class="stat-icon">✓</div></div></div>
+<div class="col-12 col-lg"><div class="card stat-card"><span class="stat-label">OVERDUE</span><div class="stat text-danger">{{overdue}}</div><div class="stat-icon text-danger" style="background:#fff0f0">!</div></div></div>
+</div>
+<div class="d-flex justify-content-between align-items-center mb-3"><h2 class="section-title mb-0">Recent tasks</h2><a href="{% url 'project_list' %}" class="small text-decoration-none fw-semibold">View projects →</a></div>
+<div class="row g-3">
+{% for task in recent_tasks %}
+<div class="col-md-6"><div class="card task-card p-3 {% if task.due_date and task.due_date < today and task.status != 'DONE' %}overdue{% endif %}">
+<div class="d-flex justify-content-between gap-2"><strong>{{task.title}}</strong><span class="badge bg-secondary">{{task.get_status_display}}</span></div>
+<small class="text-muted d-block mt-2">{{task.project.name}} · {{task.get_priority_display}} · Due {{task.due_date|default:"-"}}</small>
+<div class="mt-3"><a href="{% url 'project_detail' task.project.pk %}" class="btn btn-sm btn-outline-dark">View task</a></div>
+</div></div>
+{% empty %}<div class="col-12"><div class="card empty"><div class="fs-2 mb-2">✓</div><strong>No tasks yet</strong><p class="mb-3">Create your first task and start making progress.</p><a href="{% url 'task_create' %}" class="btn btn-brand">Create a task</a></div></div>{% endfor %}
+</div>{% endblock %}
